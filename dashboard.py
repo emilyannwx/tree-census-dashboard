@@ -7,90 +7,114 @@ from numerize.numerize import numerize
 
 
 
-
-
 st.set_page_config(page_title ='Tree Dashboard',
                    layout = 'wide',
                    initial_sidebar_state='expanded')
 
+custom_css = """
+<style>
+body {
+    background-color: #f0f2f6; /* light gray */
+}
+
+.stTextInput>div>div>input {
+    color: #333; /* dark gray */
+}
+
+.stButton>button {
+    background-color: #4CAF50; /* green */
+    color: white; /* white text */
+}
+.css-1l02zno {
+    background-color: #333; /* dark gray */
+    color: white; /* white text */
+}
+
+.css-vfdix6 {
+    background-color: #4CAF50; /* green */
+    color: white; /* white text */
+}
+
+.css-1gceuu2 {
+    color: #4CAF50; /* green */
+}
+</style>
+"""
+
+st.markdown(custom_css, unsafe_allow_html=True)
+
 @st.cache_data
 def get_data():
-    df = pd.read_csv('tree-census-combined.csv', low_memory=False)
+    df = pd.read_csv('data/2015_Street_Tree_Census_1.csv', low_memory=False)
     return df
 
 df = get_data()
 header_left, header_mid, header_right = st.columns([1,3,1],gap = 'large')
 
 with header_mid:
-    st.title('Tree Dashboard')
+    st.title('NYC Tree Dashboard')
 
 with st.sidebar:
     Borough_filter = st.multiselect(label= 'Select a Borough',
-                                  options=df['borough'].unique(),
-                                  default = df['borough'].unique())
-    
-    Artist_filter = st.multiselect(label= 'Select an District',
-                                  options=df['Artist'].unique(),
-                                  default = df['Artist'].unique())
-    
+                                  options= df["borough"].unique())    
+    Health_filter = st.multiselect(label= 'Select the Tree Health',
+                                  options=df['health'].unique())
+    Status_filter = st.multiselect(label= 'Select the Tree Status',
+                                  options=df['status'].unique())
+    Species_filter = st.multiselect(label= 'Select the Tree Species',
+                                  options= df["spc_common"].unique())
+          
 
-    
-    df1 = df.query ('Artist == @Artist_filter & Year == @Year_filter & Genre == @Genre_filter')
+    df1 = df.query ('borough == @Borough_filter  & health == @Health_filter & status == @Status_filter')
+    df2 = df.query ('borough == @Borough_filter & spc_common == @Species_filter')
 
-df1['Duration (minutes)'] = pd.to_numeric(df['Duration (minutes)'], errors='coerce')
-df1['Spotify Streams (millions)'] = pd.to_numeric(df['Spotify Streams (millions)'], errors='coerce')
-df1['Album Sales (millions)'] = pd.to_numeric(df['Album Sales (millions)'], errors='coerce')
-df1['YouTube Views (millions)'] = pd.to_numeric(df['YouTube Views (millions)'], errors='coerce')
-df1['Popularity'] = pd.to_numeric(df['Popularity'], errors='coerce')
 
-total_streams = float(df1['Spotify Streams (millions)'].sum())
-total_sales = float(df1['Album Sales (millions)'].sum())
-total_views = float(df1['YouTube Views (millions)'].sum())
-#average_duration= float(df1['Duration (minutes)'].sum()) 
-average_popularity = float(df1['Popularity'].mean())
+st.map(df1, size=20, latitude= 'latitude', longitude = 'longitude',color='#899878')
+
+tree_count = df1['borough'].value_counts()
+
+chart = alt.Chart(df2).mark_bar().encode(
+    x='spc_common',
+    y='borough'
+).properties(
+    width=600,
+    height=400
+)
+
+st.altair_chart(chart, use_container_width=True)
+
+
+
+
+df1['Tree Health'] = pd.to_numeric(df['health'], errors='coerce')
+df1['Status of Tree'] = pd.to_numeric(df['status'], errors='coerce')
+df1['Tree Species'] = pd.to_numeric(df['spc_common'], errors='coerce')
+df1['Tree Stewardship'] = pd.to_numeric(df['steward'], errors='coerce')
+
+
+total_trees = float(df1['Tree Health'].sum())
+total_trees = float(df1['Tree Health'].sum())
+total_trees = float(df1['Tree Health'].sum())
+
+average_tree = float(df1['Tree Health'].mean())
 
 
 total1,total2,total3,total4,total5 = st.columns(5,gap='large')
 
 with total1:
-    st.image('images/distribution.png',width = 300 ,use_column_width='Auto')
-    st.metric(label = 'Total Spotify Streams', value= numerize(total_streams))
+    #st.image('',width = 300 ,use_column_width='Auto')
+    st.metric(label = 'Total Trees', value= numerize(total_trees))
     
 with total2:
-    st.image('images/album.png',width = 300, use_column_width=25)
-    st.metric(label='Total Album Sales', value=numerize(total_sales))
+    #st.image('',width = 300, use_column_width=25)
+    st.metric(label='Total Trees', value=numerize(total_trees))
 
 with total3:
-    st.image('images/youtube.png',width = 300, use_column_width=300)
-    st.metric(label= 'Total Youtube Views',value=numerize(total_views,2))
+    #st.image('',width = 300, use_column_width=300)
+    st.metric(label= 'Total Treess',value=numerize(total_trees,2))
 
 #
-with total5:
-    st.image('images/subscriber.png',width = 300, use_column_width=300)
-    st.metric(label='Average Popularity Rating',value=numerize(average_popularity))
-
-st.metric("Total Streams", f"{total_streams:.2f} million")
-
-chart = alt.Chart(df1).mark_bar().encode(
-    x='Song',
-    y='Spotify Streams (millions)'
-).properties(
-    width=600,
-    height=400
-)
-
-st.altair_chart(chart, use_container_width=True)
-
-
-st.title('Genre Popularity Comparison')
-
-chart = alt.Chart(df1).mark_bar().encode(
-    x='Genre',
-    y='Popularity'
-).properties(
-    width=600,
-    height=400
-)
-
-st.altair_chart(chart, use_container_width=True)
+#with total5:
+    #st.image('',width = 300, use_column_width=300)
+    #st.metric(label='Average Tree Rating',value=numerize(average_tree))
 
