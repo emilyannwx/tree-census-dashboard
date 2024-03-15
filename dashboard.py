@@ -53,10 +53,10 @@ df = get_data()
 new_column_names = {'steward':'Stewardship Signs', 'spc_common':'Species', 'nta_name': 'Neighborhood'}
 df = df.rename(columns=new_column_names)
 df['health'] = df['health'].fillna("Unknown (Choose for Dead/Stump)")
+df['Species'] = df['Species'].fillna("Unknown")
 df['Stewardship Signs'] = df['Stewardship Signs'].fillna("No Signs")
 new_values = {'1or2': '1 or 2 Signs', '3or4': '3 or 4 Signs', '4orMore': '4 or More Signs'}
 df['Stewardship Signs'] = df['Stewardship Signs'].replace(new_values)
-
 
 header_left, header_mid, header_right = st.columns([1,3,1],gap = 'large')
 
@@ -76,6 +76,34 @@ with st.sidebar:
 
     df1 = df.query ('borough == @Borough_filter  & health == @Health_filter & status == @Status_filter')
     df2 = df.query ('borough == @Borough_filter & Species == @Species_filter & health == @Health_filter')
+
+total_trees = df['tree_id'].value_counts()
+
+tree_health = df['health'].value_counts()
+good_trees = tree_health.get('Good',0)
+fair_trees = tree_health.get('Fair',0)
+healthy_trees = good_trees + fair_trees
+
+tree_status = df['status'].value_counts()
+dead_trees = tree_status.get('Dead', 0)
+stumps = tree_status.get('Stump', 0)
+dead_stumps = dead_trees + stumps 
+
+
+
+total1,total2,total3 = st.columns(3,gap='large')
+
+with total1:
+    st.image('images/nature.png',width = 300 ,use_column_width='Auto')
+    st.metric(label = 'Total Trees', value= numerize(len(total_trees)))
+    
+with total2:
+    st.image('images/fruit-tree.png',width = 300, use_column_width=25)
+    st.metric(label='Healthy Trees', value = healthy_trees)
+
+with total3:
+    st.image('images/dead-tree.png',width = 300, use_column_width=300)
+    st.metric(label= 'Dead Trees and Stumps',value=dead_stumps)
 
 
 st.map(df1, size=20, latitude= 'latitude', longitude = 'longitude',color='#899878')
@@ -98,6 +126,7 @@ def plot_species_by_neighborhood():
     fig.update_layout(legend_title_text=' Tree Species')
     fig.update_layout(width=1000, height = 1000, title_x = 0.5)  
     st.plotly_chart(fig)
+
 plot_species_by_neighborhood()
 
 
@@ -119,44 +148,6 @@ def plot_stewardship():
         )
     fig.update_layout(legend_title_text = "Number of Stewardship Signs")
     st.plotly_chart(fig)
+
 plot_stewardship()
-
-tree_count = df1['borough'].value_counts()
-unique_nbh = df['Neighborhood'].unique()
-
-
-
-
-
-df1['Tree Health'] = pd.to_numeric(df['health'], errors='coerce')
-df1['Status of Tree'] = pd.to_numeric(df['status'], errors='coerce')
-#df1['Tree Species'] = pd.to_numeric(df['spc_common'], errors='coerce')
-#df1['Tree Stewardship'] = pd.to_numeric(df['steward'], errors='coerce')
-
-
-total_trees = float(df1['Tree Health'].sum())
-total_trees = float(df1['Tree Health'].sum())
-total_trees = float(df1['Tree Health'].sum())
-
-average_tree = float(df1['Tree Health'].mean())
-
-
-total1,total2,total3,total4,total5 = st.columns(5,gap='large')
-
-with total1:
-    #st.image('',width = 300 ,use_column_width='Auto')
-    st.metric(label = 'Total Trees', value= numerize(total_trees))
-    
-with total2:
-    #st.image('',width = 300, use_column_width=25)
-    st.metric(label='Total Trees', value=numerize(total_trees))
-
-with total3:
-    #st.image('',width = 300, use_column_width=300)
-    st.metric(label= 'Total Treess',value=numerize(total_trees,2))
-
-#
-#with total5:
-    #st.image('',width = 300, use_column_width=300)
-    #st.metric(label='Average Tree Rating',value=numerize(average_tree))
 
