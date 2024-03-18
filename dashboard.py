@@ -5,7 +5,7 @@ import altair as alt
 from numerize.numerize import numerize 
 
 
-st.set_page_config(page_title ='Tree Dashboard',
+st.set_page_config(page_title ='TreeNYC',
                    page_icon= ":deciduous_tree:",
                    layout = 'wide',
                    initial_sidebar_state='expanded')
@@ -27,10 +27,10 @@ df['Stewardship Signs'] = df['Stewardship Signs'].fillna("No Signs")
 new_values = {'1or2': '1 or 2 Signs', '3or4': '3 or 4 Signs', '4orMore': '4 or More Signs'}
 df['Stewardship Signs'] = df['Stewardship Signs'].replace(new_values)
 
-title_left, title_mid, title_right = st.columns([2,3,2],gap = 'large')
+title_left, title_mid, title_right = st.columns([1,5,1],gap = 'large')
 
 with title_mid:
-    st.title('NYC Tree Dashboard')
+    st.title('TreeNYC: An Interactive Dashboard')
 
 with st.sidebar:
     Borough_filter = st.multiselect(label= 'Select a Borough',
