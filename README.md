@@ -17,7 +17,7 @@ This dashboard provides an interactive interface to explore data related to tree
 
 ## Launch 
 
-The Tree Census Dashboard is accessible online, and you can explore it by visiting the following website: [NYCTree Dashboard](https://treenyc.streamlit.app)
+The TreeNYC Dashboard is accessible online, and you can explore it by visiting the following website: [TreeNYC Dashboard](https://treenyc.streamlit.app)
 
 ## Usage 
 Use the following instructions to explore the data:
