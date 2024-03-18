@@ -5,42 +5,11 @@ import altair as alt
 from numerize.numerize import numerize 
 
 
-
 st.set_page_config(page_title ='Tree Dashboard',
+                   page_icon= ":deciduous_tree:",
                    layout = 'wide',
                    initial_sidebar_state='expanded')
 
-custom_css = """
-<style>
-body {
-    background-color: #f0f2f6; /* light gray */
-}
-
-.stTextInput>div>div>input {
-    color: #333; /* dark gray */
-}
-
-.stButton>button {
-    background-color: #4CAF50; /* green */
-    color: white; /* white text */
-}
-.css-1l02zno {
-    background-color: #333; /* dark gray */
-    color: white; /* white text */
-}
-
-.css-vfdix6 {
-    background-color: #4CAF50; /* green */
-    color: white; /* white text */
-}
-
-.css-1gceuu2 {
-    color: #4CAF50; /* green */
-}
-</style>
-"""
-
-st.markdown(custom_css, unsafe_allow_html=True)
 
 @st.cache_data
 def get_data():
@@ -58,9 +27,9 @@ df['Stewardship Signs'] = df['Stewardship Signs'].fillna("No Signs")
 new_values = {'1or2': '1 or 2 Signs', '3or4': '3 or 4 Signs', '4orMore': '4 or More Signs'}
 df['Stewardship Signs'] = df['Stewardship Signs'].replace(new_values)
 
-header_left, header_mid, header_right = st.columns([1,3,1],gap = 'large')
+title_left, title_mid, title_right = st.columns([2,3,2],gap = 'large')
 
-with header_mid:
+with title_mid:
     st.title('NYC Tree Dashboard')
 
 with st.sidebar:
@@ -91,22 +60,20 @@ dead_stumps = dead_trees + stumps
 
 
 
-total1,total2,total3 = st.columns(3,gap='large')
+total1,total2,total3 = st.columns([3,3,2])
 
 with total1:
-    st.image('images/nature.png',width = 300 ,use_column_width='Auto')
+    st.image('images/nature.png',width = 200 ,use_column_width='Auto')
     st.metric(label = 'Total Trees', value= numerize(len(total_trees)))
     
 with total2:
-    st.image('images/fruit-tree.png',width = 300, use_column_width=25)
+    st.image('images/fruit-tree.png',width = 200, use_column_width='Auto')
     st.metric(label='Healthy Trees', value = healthy_trees)
 
 with total3:
-    st.image('images/dead-tree.png',width = 300, use_column_width=300)
+    st.image('images/dead-tree.png',width = 200, use_column_width='Auto')
     st.metric(label= 'Dead Trees and Stumps',value=dead_stumps)
 
-
-st.map(df1, size=20, latitude= 'latitude', longitude = 'longitude',color='#899878')
 
 
 def plot_species_by_neighborhood():
@@ -124,11 +91,8 @@ def plot_species_by_neighborhood():
     )
     
     fig.update_layout(legend_title_text=' Tree Species')
-    fig.update_layout(width=1000, height = 1000, title_x = 0.5)  
-    st.plotly_chart(fig)
-
-plot_species_by_neighborhood()
-
+    fig.update_layout(width=1000, height = 1000)  
+    st.plotly_chart(fig, use_container_width = True)
 
 
 def plot_stewardship():
@@ -147,7 +111,21 @@ def plot_stewardship():
         title = "Percentage of Trees Exhibiting Signs of Stewardship" 
         )
     fig.update_layout(legend_title_text = "Number of Stewardship Signs")
-    st.plotly_chart(fig)
+    fig.update_layout(width=1000, height = 1000)  
+ 
 
-plot_stewardship()
+    st.plotly_chart(fig, use_container_width = True)
+
+
+
+st.title("Tree Distribution Across NYC")
+st.map(df1, size=20, latitude= 'latitude', longitude = 'longitude',color='#899878', use_container_width= False)
+
+chart1, chart2 = st.columns([2,1])
+
+with chart1:
+    plot_species_by_neighborhood()
+with chart2:
+    plot_stewardship()
+
 
