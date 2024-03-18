@@ -12,12 +12,12 @@ This dashboard provides an interactive interface to explore data related to tree
 ## Technologies Applied 
 - Pandas
 - Streamlit
-= Plotly Express
+- Plotly Express
 - Numerize 
 
 ## Launch 
 
-The Tree Census Dashboard is accessible online, and you can explore it by visiting the following website: [Tree Census Dashboard](https://www.filler.com)
+The Tree Census Dashboard is accessible online, and you can explore it by visiting the following website: [NYCTree Dashboard](https://treenyc.streamlit.app)
 
 ## Usage 
 Use the following instructions to explore the data:
