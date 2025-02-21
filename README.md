@@ -28,7 +28,7 @@ Use the following instructions to explore the data:
 
 ## Credits
 
-### Data Soucre
+### Data Source
 - NYC Open Data - 2015 Street Tree Census - Tree Data
 
 ### Icon Credits
